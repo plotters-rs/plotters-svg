@@ -278,14 +278,22 @@ impl<'a> DrawingBackend for SVGBackend<'a> {
         } else {
             (make_svg_color(style.color()), "none".to_string())
         };
+        let mut width = bottom_right.0 - upper_left.0;
+        if width <= 0 {
+            width = 1;
+        };
+        let mut height = bottom_right.1 - upper_left.1;
+        if height <= 0 {
+            height = 1;
+        };
 
         self.open_tag(
             SVGTag::Rectangle,
             &[
                 ("x", &format!("{}", upper_left.0)),
                 ("y", &format!("{}", upper_left.1)),
-                ("width", &format!("{}", bottom_right.0 - upper_left.0)),
-                ("height", &format!("{}", bottom_right.1 - upper_left.1)),
+                ("width", &format!("{}", width)),
+                ("height", &format!("{}", height)),
                 ("opacity", &make_svg_opacity(style.color())),
                 ("fill", &fill),
                 ("stroke", &stroke),
