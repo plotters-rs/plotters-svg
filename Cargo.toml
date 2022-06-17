@@ -19,4 +19,4 @@ debug = []
 
 [dev-dependencies]
 plotters = { version = "^0.3.0", default_features = false, features = ["ttf"] }
-regex = "1.5"
+regex = "1.5.6"
