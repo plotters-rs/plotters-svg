@@ -284,8 +284,8 @@ impl<'a> DrawingBackend for SVGBackend<'a> {
             &[
                 ("x", &format!("{}", upper_left.0)),
                 ("y", &format!("{}", upper_left.1)),
-                ("width", &format!("{}", bottom_right.0 - upper_left.0)),
-                ("height", &format!("{}", bottom_right.1 - upper_left.1)),
+                ("width", &format!("{}", bottom_right.0 - upper_left.0 + 1)),
+                ("height", &format!("{}", bottom_right.1 - upper_left.1 + 1)),
                 ("opacity", &make_svg_opacity(style.color())),
                 ("fill", &fill),
                 ("stroke", &stroke),
@@ -830,5 +830,26 @@ mod test {
         }
 
         checked_save_file("test_draw_pixel_alphas", &content);
+    }
+
+    #[test]
+    fn test_rect_width_and_height() {
+        use regex::Regex;
+
+        let re: Regex = Regex::new("<rect[^>]*/>").unwrap();
+        let (width, height) = (100_i32, 100_i32);
+
+        let mut content = String::default();
+        {
+            let root = SVGBackend::with_string(&mut content, (width as u32, height as u32))
+                .into_drawing_area();
+            root.fill(&WHITE).unwrap();
+        }
+
+        checked_save_file("test_rect_width_and_height", &content);
+
+        let m = re.find(&content).unwrap().as_str();
+        assert!(m.contains(&format!("width=\"{width}\"")));
+        assert!(m.contains(&format!("height=\"{height}\"")));
     }
 }
